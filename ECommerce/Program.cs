@@ -1,12 +1,18 @@
+using ECommerce.Date;
+using Microsoft.EntityFrameworkCore;
+
 namespace ECommerce
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<EcommerceDbContext>(
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString
+                  ("DefaultConnection")));
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -29,6 +35,7 @@ namespace ECommerce
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            AppDbInitializer.Seed(app);
 
             app.Run();
         }
